@@ -1,0 +1,16 @@
+Pridelenie úloh:
+Martin Michálik (xmicham00) - profiling, devops a koordinácia projektu
+Matúš Magyar (xmagyam00) - programovanie knižnice s matematickými funkciami (Test-driven development)
+Robert Páleš (xpalesr00) - Programovanie užívateľského rozhrania aplikácie (Qt)
+Richard Veselka (xveselr00) - uživateľská/programová dokumentácia, mockup
+Poznámka: Spolupráca medzi člennmi týmu sa beria ako samozrejmosť. Ak niekto nebude stíhať alebo bude potrebovať pomôcť tak na jeho úlohe môže pracovať ktorýkoľvek člen týmu
+
+Komunikačné kanály: Na komunikáciu pri práci na projekte slúžia primárne platformy Discord a GitHub plus prípadne dohodnuté stretnutia.
+
+Verozvací sýstem a hosting kódu: Verzovací systém je Git a kód je hostovaný na platforme GitHub (https://github.com/MatiniX/ivs-projekt2026). Vyučujúci môžu do repozitára nahliadnúť kliknutím na odkaz v zátvorkách. Dotatočne bude pridelený prístup GitHub účtu ivskontrola ako kontribútor projektu
+
+Termíny:
+Do 19.3.2026 odovzdať tento súbor
+Do 1.4.2026 hotové mockupy a všetky potrebné návrhy aplikácie
+Do 21.4.2026 hotová aplikácia (je možné aplikáciu spustiť a použivať podľa zadania)
+Do 30.4.2026 Priestor na opravu akýchkoľvek chýb a nedostatkov do odovzdania projektu
