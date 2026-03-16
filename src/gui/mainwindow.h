@@ -18,20 +18,23 @@ public:
     ~MainWindow();
 
 private slots:
-    void btnPlus();
+    void onDigitClicked();
 
-    void btnMinus();
+    void onOperatorClicked();
 
-    void btnMultiply();
-
-    void btnDivision();
+    void btnEqual();
 
     void btnClear();
+
+    void btnDot();
 
     void btnHelp();
 
 
 private:
     Ui::MainWindow *ui;
+    double storedValue = 0;
+    char currentOperator = 0;
+    bool waitingForInput = false;
 };
 #endif // MAINWINDOW_H
