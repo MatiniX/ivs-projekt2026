@@ -5,7 +5,7 @@
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class MainWindow;
+class CalculatorApp;
 }
 QT_END_NAMESPACE
 
@@ -30,11 +30,9 @@ private slots:
 
     void btnHelp();
 
+    double evaluateExpression(const QString &expr);
 
 private:
-    Ui::MainWindow *ui;
-    double storedValue = 0;
-    char currentOperator = 0;
-    bool waitingForInput = false;
+    Ui::CalculatorApp *ui;
 };
 #endif // MAINWINDOW_H

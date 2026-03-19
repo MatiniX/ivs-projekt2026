@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>HelpWindow</class>
- <widget class="QDialog" name="HelpWindow">
+ <class>help</class>
+ <widget class="QDialog" name="help">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,8 +11,38 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Nápoveda</string>
   </property>
+  <widget class="QPlainTextEdit" name="helpText">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>381</width>
+     <height>251</height>
+    </rect>
+   </property>
+   <property name="plainText">
+    <string>Napoveda pouzivani:
+TODO</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="helpClose">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>270</y>
+     <width>80</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="text">
+    <string>Zatvoriť</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

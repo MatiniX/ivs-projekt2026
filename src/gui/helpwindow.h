@@ -4,7 +4,7 @@
 #include <QDialog>
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class HelpWindow;
+class help;
 }
 QT_END_NAMESPACE
 
@@ -16,7 +16,7 @@ public:
     ~HelpWindow();
 
 private:
-    Ui::HelpWindow *ui;
+    Ui::help *ui;
 };
 
 #endif // HELPWINDOW_H
