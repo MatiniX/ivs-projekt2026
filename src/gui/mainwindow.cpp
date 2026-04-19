@@ -1,6 +1,11 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "helpwindow.h"
+#include "calculator/math.hpp"
+
+#include <QMap>
+#include <QPushButton>
+
 #include <stdexcept>
 #include <QRegularExpression>
 
@@ -139,6 +144,7 @@ void MainWindow::onOperatorClicked()
 {
     QPushButton *btn = (QPushButton*)sender();
     QString name = btn->objectName();
+    QString currentText = ui->display->text();
 
     QMap<QString, QString> operatorMap = {
         {"btnPlus",  "+"},
@@ -146,16 +152,53 @@ void MainWindow::onOperatorClicked()
         {"btnMult",  "*"},
         {"btnDiv",   "/"},
         {"btnMod",   "%"},
-        {"btnRoot",  "r"},
+        {"btnRoot",  "^"},
         {"btnNSqrt", "n"},
         {"btnSqrt",  "s"},
-        {"btnFact",  "f"}
+        {"btnFact",  "!"}
     };
 
-    // Only works with + for now
-    if (name == "btnPlus") {
-        ui->display->setText(ui->display->text() + operatorMap.value(name));
+    if (!operatorMap.contains(name)) {
+        return;
     }
+
+    const QString token = operatorMap.value(name);
+    static QRegularExpression binaryOperatorRe("[\\+\\-\\*/%\\^n]$");
+
+    if (name == "btnFact") {
+        if (currentText == "0" || currentText.endsWith(binaryOperatorRe) || currentText.endsWith('.')) {
+            return;
+        }
+
+        ui->display->setText(currentText + token);
+        return;
+    }
+
+    if (name == "btnSqrt") {
+        if (currentText == "0") {
+            ui->display->setText(token);
+        } else {
+            ui->display->setText(currentText + token);
+        }
+
+        return;
+    }
+
+    if (name == "btnMinus") {
+        if (currentText == "0") {
+            ui->display->setText(token);
+        } else {
+            ui->display->setText(currentText + token);
+        }
+
+        return;
+    }
+
+    if (currentText == "0" || currentText.endsWith(binaryOperatorRe) || currentText.endsWith('.')) {
+        return;
+    }
+
+    ui->display->setText(currentText + token);
 }
 
 // Evaluate expression
@@ -184,12 +227,12 @@ void MainWindow::btnClear() {
 // Add dot in number
 void MainWindow::btnDot() {
     QString currentText = ui->display->text();
-    static QRegularExpression re("[\\+\\-\\*/%rnfs]");
+    static QRegularExpression re("[\\+\\-\\*/%\\^ns!]");
     int lastOperator = currentText.lastIndexOf(re);
 
     QString currentNumber = currentText.mid(lastOperator + 1);
 
-    if (!currentNumber.contains('.')) {
+    if (!currentNumber.contains('.') && !currentText.endsWith('!')) {
         ui->display->setText(currentText + ".");
     }
 }
@@ -207,21 +250,6 @@ MainWindow::~MainWindow()
 }
 
 // Simple evaluation of expression
-// Only works with +
 double MainWindow::evaluateExpression(const QString &expr) {
-    double result = 0.0;
-
-    QStringList parts = expr.split('+', Qt::SkipEmptyParts);
-
-    for (const QString &part : parts) {
-        bool valid;
-        double value = part.toDouble(&valid);
-
-        if (valid) {
-            result += value;
-        } else {
-            throw std::runtime_error("Invalid number");
-        }
-    }
-    return result;
+    return calculator::math::evaluateExpression(expr.toStdString());
 }
