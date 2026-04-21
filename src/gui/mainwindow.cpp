@@ -6,6 +6,13 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    ui->display->setText("0");
+
+    for (QPushButton *btn : findChildren<QPushButton*>()) {
+        btn->setFocusPolicy(Qt::NoFocus);
+    }
+    ui->display->setFocus();
+
     // Connect number buttons
     for (int i = 0; i < 10; i++) {
         QPushButton *btn = findChild<QPushButton*>("btn" + QString::number(i));
