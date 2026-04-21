@@ -166,7 +166,11 @@ void MainWindow::onOperatorClicked()
     static QRegularExpression binaryOperatorRe("[\\+\\-\\*/%\\^n]$");
 
     if (name == "btnFact") {
-        if (currentText == "0" || currentText.endsWith(binaryOperatorRe) || currentText.endsWith('.')) {
+        if (currentText == "0" || currentText.endsWith('+') ||
+				  currentText.endsWith('-') ||
+			  	  currentText.endsWith('*') ||
+				  currentText.endsWith('/') ||
+			          currentText.endsWith('.')) {
             return;
         }
 
@@ -194,7 +198,11 @@ void MainWindow::onOperatorClicked()
         return;
     }
 
-    if (currentText == "0" || currentText.endsWith(binaryOperatorRe) || currentText.endsWith('.')) {
+    if (currentText == "0" || currentText.endsWith('+') ||
+			      currentText.endsWith('-') ||
+			      currentText.endsWith('*') ||
+			      currentText.endsWith('/') ||
+			      currentText.endsWith('.')) {
         return;
     }
 
