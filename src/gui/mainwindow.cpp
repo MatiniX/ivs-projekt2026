@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 
-// Constructor
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::CalculatorApp)
@@ -117,7 +116,6 @@ MainWindow::MainWindow(QWidget *parent)
 )");
 }
 
-// Digit buttons click
 void MainWindow::onDigitClicked()
 {
     QPushButton *btn = (QPushButton*)sender();
@@ -130,7 +128,6 @@ void MainWindow::onDigitClicked()
     }
 }
 
-// Operators click
 void MainWindow::onOperatorClicked()
 {
     QPushButton *btn = (QPushButton*)sender();
@@ -138,7 +135,7 @@ void MainWindow::onOperatorClicked()
     QString currentText = ui->display->text();
 
     if (name == "btnSqrt" || name == "btnFact") {
-        static QRegularExpression binaryOperatorRe("[\\+\\-\\*/%\\^n]$");
+        static QRegularExpression binaryOperatorRe("[\\+\\-\\*/%\\^√]$");
         if (currentText.contains(binaryOperatorRe) || currentText.endsWith('.')) {
             return;
         }
@@ -157,7 +154,7 @@ void MainWindow::onOperatorClicked()
 
             ui->display->setText(QString::number(result));
 
-        } catch (std::exception &e) {
+        } catch (const std::exception&) {
             ui->display->setText("Error");
         }
         return;
@@ -170,7 +167,7 @@ void MainWindow::onOperatorClicked()
         {"btnDiv",   "/"},
         {"btnMod",   "%"},
         {"btnRoot",  "^"},
-        {"btnNSqrt", "n"}
+        {"btnNSqrt", "√"}
     };
 
     if (!operatorMap.contains(name)) {
@@ -183,7 +180,7 @@ void MainWindow::onOperatorClicked()
         if (currentText == "0") {
             ui->display->setText(token);
         } else {
-            ui->display->setText(currentText + token);
+            ui->display->insert(token);
         }
 
         return;
@@ -193,19 +190,18 @@ void MainWindow::onOperatorClicked()
         currentText.endsWith('-') || currentText.endsWith('*') ||
         currentText.endsWith('/') || currentText.endsWith('.') ||
         currentText.endsWith('%') || currentText.endsWith('^') ||
-        currentText.endsWith('n')) {
+        currentText.endsWith("√")) {
         return;
     }
 
     ui->display->insert(token);
 }
 
-// Evaluate expression
 void MainWindow::btnEqual()
 {
     QString expression = ui->display->text();
 
-    static QRegularExpression invalidRe("[\\+\\-\\*/%\\^n]$");
+    static QRegularExpression invalidRe("[\\+\\-\\*/%\\^√]$");
     if (expression.contains(invalidRe)) {
         return;
     }
@@ -222,40 +218,37 @@ void MainWindow::btnEqual()
     }
 }
 
-// Clear both displays
 void MainWindow::btnClear() {
     ui->display->setText("0");
     ui->displayHistory->clear();
 }
 
-// Add dot in number
 void MainWindow::btnDot() {
     QString currentText = ui->display->text();
-    static QRegularExpression re("[\\+\\-\\*/%\\^ns!]");
+    static QRegularExpression re("[\\+\\-\\*/%\\^√]");
     int lastOperator = currentText.lastIndexOf(re);
 
     QString currentNumber = currentText.mid(lastOperator + 1);
 
     if (!currentNumber.contains('.') && !currentText.endsWith('!')) {
-        ui->display->setText(currentText + ".");
+        ui->display->insert(".");
     }
 }
 
-// Display help
 void MainWindow::btnHelp() {
     HelpWindow helpWindow(this);
     helpWindow.exec();
 }
 
-// Destructor
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-// Simple evaluation of expression
 double MainWindow::evaluateExpression(const QString &expr) {
-    return calculator::math::evaluateExpression(expr.toStdString());
+    QString internalExpr = expr;
+    internalExpr.replace("√", "n");
+    return calculator::math::evaluateExpression(internalExpr.toStdString());
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -290,16 +283,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             case Qt::Key_Return:
                 ui->btnEqual->animateClick();
                 break;
-            case Qt::Key_Backspace: {
-                QString text = ui->display->text();
-                if (text.length() > 1) {
-                    text.chop(1);
-                    ui->display->setText(text);
-                } else {
-                    ui->display->setText("0");
-                }
+            case Qt::Key_Backspace:
+                ui->display->backspace();
                 break;
-            }
             case Qt::Key_Escape:
                 ui->btnClear->animateClick();
                 break;
