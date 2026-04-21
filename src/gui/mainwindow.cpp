@@ -1,13 +1,4 @@
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
-#include "helpwindow.h"
-#include "calculator/math.hpp"
-
-#include <QMap>
-#include <QPushButton>
-
-#include <stdexcept>
-#include <QRegularExpression>
 
 // Constructor
 MainWindow::MainWindow(QWidget *parent)
@@ -135,7 +126,7 @@ void MainWindow::onDigitClicked()
     if (ui->display->text() == "0") {
        ui->display->setText(digit);
     } else {
-        ui->display->setText(ui->display->text() + digit);
+        ui->display->insert(btn->text());
     }
 }
 
@@ -146,6 +137,32 @@ void MainWindow::onOperatorClicked()
     QString name = btn->objectName();
     QString currentText = ui->display->text();
 
+    if (name == "btnSqrt" || name == "btnFact") {
+        static QRegularExpression binaryOperatorRe("[\\+\\-\\*/%\\^n]$");
+        if (currentText.contains(binaryOperatorRe) || currentText.endsWith('.')) {
+            return;
+        }
+
+        try {
+            double val = currentText.toDouble();
+            double result = 0;
+
+            if (name == "btnSqrt") {
+                result = calculator::math::squareRoot(val);
+                ui->displayHistory->setText("√" + currentText);
+            } else {
+                result = calculator::math::factorial(static_cast<long long>(val));
+                ui->displayHistory->setText(currentText + "!");
+            }
+
+            ui->display->setText(QString::number(result));
+
+        } catch (std::exception &e) {
+            ui->display->setText("Error");
+        }
+        return;
+    }
+
     QMap<QString, QString> operatorMap = {
         {"btnPlus",  "+"},
         {"btnMinus", "-"},
@@ -153,9 +170,7 @@ void MainWindow::onOperatorClicked()
         {"btnDiv",   "/"},
         {"btnMod",   "%"},
         {"btnRoot",  "^"},
-        {"btnNSqrt", "n"},
-        {"btnSqrt",  "s"},
-        {"btnFact",  "!"}
+        {"btnNSqrt", "n"}
     };
 
     if (!operatorMap.contains(name)) {
@@ -163,30 +178,6 @@ void MainWindow::onOperatorClicked()
     }
 
     const QString token = operatorMap.value(name);
-    static QRegularExpression binaryOperatorRe("[\\+\\-\\*/%\\^n]$");
-
-    if (name == "btnFact") {
-        if (currentText == "0" || currentText.endsWith('+') ||
-				  currentText.endsWith('-') ||
-			  	  currentText.endsWith('*') ||
-				  currentText.endsWith('/') ||
-			          currentText.endsWith('.')) {
-            return;
-        }
-
-        ui->display->setText(currentText + token);
-        return;
-    }
-
-    if (name == "btnSqrt") {
-        if (currentText == "0") {
-            ui->display->setText(token);
-        } else {
-            ui->display->setText(currentText + token);
-        }
-
-        return;
-    }
 
     if (name == "btnMinus") {
         if (currentText == "0") {
@@ -199,20 +190,25 @@ void MainWindow::onOperatorClicked()
     }
 
     if (currentText == "0" || currentText.endsWith('+') ||
-			      currentText.endsWith('-') ||
-			      currentText.endsWith('*') ||
-			      currentText.endsWith('/') ||
-			      currentText.endsWith('.')) {
+        currentText.endsWith('-') || currentText.endsWith('*') ||
+        currentText.endsWith('/') || currentText.endsWith('.') ||
+        currentText.endsWith('%') || currentText.endsWith('^') ||
+        currentText.endsWith('n')) {
         return;
     }
 
-    ui->display->setText(currentText + token);
+    ui->display->insert(token);
 }
 
 // Evaluate expression
 void MainWindow::btnEqual()
 {
     QString expression = ui->display->text();
+
+    static QRegularExpression invalidRe("[\\+\\-\\*/%\\^n]$");
+    if (expression.contains(invalidRe)) {
+        return;
+    }
 
     try {
         double result = evaluateExpression(expression);
@@ -260,4 +256,75 @@ MainWindow::~MainWindow()
 // Simple evaluation of expression
 double MainWindow::evaluateExpression(const QString &expr) {
     return calculator::math::evaluateExpression(expr.toStdString());
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() >= Qt::Key_0 && event->key() <= Qt::Key_9) {
+        int number = event->key() - Qt::Key_0;
+        QString btnName = "btn" + QString::number(number);
+        QPushButton *btn = findChild<QPushButton*>(btnName);
+        if (btn) {
+            btn->animateClick();
+        }
+    }
+
+    else {
+        switch (event->key()) {
+            case Qt::Key_Plus:
+                ui->btnPlus->animateClick();
+                break;
+            case Qt::Key_Minus:
+                ui->btnMinus->animateClick();
+                break;
+            case Qt::Key_Asterisk:
+                ui->btnMult->animateClick();
+                break;
+            case Qt::Key_Slash:
+                ui->btnDiv->animateClick();
+                break;
+            case Qt::Key_Equal:
+                ui->btnEqual->animateClick();
+                break;
+            case Qt::Key_Enter:
+            case Qt::Key_Return:
+                ui->btnEqual->animateClick();
+                break;
+            case Qt::Key_Backspace: {
+                QString text = ui->display->text();
+                if (text.length() > 1) {
+                    text.chop(1);
+                    ui->display->setText(text);
+                } else {
+                    ui->display->setText("0");
+                }
+                break;
+            }
+            case Qt::Key_Escape:
+                ui->btnClear->animateClick();
+                break;
+            case Qt::Key_Period:
+            case Qt::Key_Comma:
+                ui->btnDot->animateClick();
+                break;
+            case Qt::Key_F:
+                ui->btnFact->animateClick();
+                break;
+            case Qt::Key_P:
+                ui->btnRoot->animateClick();
+                break;
+            case Qt::Key_S:
+                ui->btnSqrt->animateClick();
+                break;
+            case Qt::Key_N:
+                ui->btnNSqrt->animateClick();
+                break;
+            case Qt::Key_M:
+                ui->btnMod->animateClick();
+                break;
+            default:
+                QMainWindow::keyPressEvent(event);
+                return;
+        }
+    }
 }
