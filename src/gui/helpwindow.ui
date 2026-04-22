@@ -23,8 +23,44 @@
     </rect>
    </property>
    <property name="plainText">
-    <string>Napoveda pouzivani:
-TODO</string>
+    <string>Nápověda ovládání kalkulačky
+
+Unární operátory (faktoriál, druhá odmocnina): Pro použití unárních operátorů nejprve zadejte číslo a poté klikněte na vybrané tlačítko operace. Výsledek se zobrazí okamžitě.
+
+Binární operátory (+, -, , /, %): Postupujte následovně: nejprve zadejte první číslo (operand), poté vyberte binární operátor, zadejte druhé číslo a nakonec klikněte na tlačítko &quot;=&quot;.
+
+Mocnina: Zadejte základ, klikněte na funkci &quot;^&quot;, zadejte exponent a klikněte na &quot;=&quot;.
+
+N-tá odmocnina: Zadejte stupeň odmocniny (n), klikněte na funkci &quot;√&quot;, zadejte číslo, které chcete odmocnit, a klikněte na &quot;=&quot;.
+
+Klávesové zkratky
+Pro rychlejší práci můžete místo myši používat klávesnici:
+
+Číslice: 0 až 9
+
+Základní operátory: +, -, *, /
+
+Výpočet (rovná se): Enter
+ 
+Smazání (Clear): Escape
+
+Smazat poslední znak: Backspace
+
+Desetinná čárka: . (tečka) nebo , (čárka)
+
+Speciální funkce:
+
+Faktoriál: klávesa F
+
+Mocnina (Power): klávesa P
+
+Druhá odmocnina (Sqrt): klávesa S
+
+N-tá odmocnina: klávesa N
+
+Modulo (zbytek po dělení): klávesa M
+
+Tip: V textovém poli displeje se můžete pohybovat pomocí šipek a opravovat chyby kdekoli ve výrazu.</string>
    </property>
   </widget>
   <widget class="QPushButton" name="helpClose">

@@ -1,20 +1,17 @@
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
-#include "helpwindow.h"
-#include "calculator/math.hpp"
 
-#include <QMap>
-#include <QPushButton>
-
-#include <stdexcept>
-#include <QRegularExpression>
-
-// Constructor
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::CalculatorApp)
 {
     ui->setupUi(this);
+
+    ui->display->setText("0");
+
+    for (QPushButton *btn : findChildren<QPushButton*>()) {
+        btn->setFocusPolicy(Qt::NoFocus);
+    }
+    ui->display->setFocus();
 
     // Connect number buttons
     for (int i = 0; i < 10; i++) {
@@ -126,7 +123,6 @@ MainWindow::MainWindow(QWidget *parent)
 )");
 }
 
-// Digit buttons click
 void MainWindow::onDigitClicked()
 {
     QPushButton *btn = (QPushButton*)sender();
@@ -135,16 +131,41 @@ void MainWindow::onDigitClicked()
     if (ui->display->text() == "0") {
        ui->display->setText(digit);
     } else {
-        ui->display->setText(ui->display->text() + digit);
+        ui->display->insert(btn->text());
     }
 }
 
-// Operators click
 void MainWindow::onOperatorClicked()
 {
     QPushButton *btn = (QPushButton*)sender();
     QString name = btn->objectName();
     QString currentText = ui->display->text();
+
+    if (name == "btnSqrt" || name == "btnFact") {
+        static QRegularExpression binaryOperatorRe("[\\+\\-\\*/%\\^√]$");
+        if (currentText.contains(binaryOperatorRe) || currentText.endsWith('.')) {
+            return;
+        }
+
+        try {
+            double val = currentText.toDouble();
+            double result = 0;
+
+            if (name == "btnSqrt") {
+                result = calculator::math::squareRoot(val);
+                ui->displayHistory->setText("√" + currentText);
+            } else {
+                result = calculator::math::factorial(static_cast<long long>(val));
+                ui->displayHistory->setText(currentText + "!");
+            }
+
+            ui->display->setText(QString::number(result));
+
+        } catch (const std::exception&) {
+            ui->display->setText("Error");
+        }
+        return;
+    }
 
     QMap<QString, QString> operatorMap = {
         {"btnPlus",  "+"},
@@ -153,9 +174,7 @@ void MainWindow::onOperatorClicked()
         {"btnDiv",   "/"},
         {"btnMod",   "%"},
         {"btnRoot",  "^"},
-        {"btnNSqrt", "n"},
-        {"btnSqrt",  "s"},
-        {"btnFact",  "!"}
+        {"btnNSqrt", "√"}
     };
 
     if (!operatorMap.contains(name)) {
@@ -163,56 +182,36 @@ void MainWindow::onOperatorClicked()
     }
 
     const QString token = operatorMap.value(name);
-    static QRegularExpression binaryOperatorRe("[\\+\\-\\*/%\\^n]$");
-
-    if (name == "btnFact") {
-        if (currentText == "0" || currentText.endsWith('+') ||
-				  currentText.endsWith('-') ||
-			  	  currentText.endsWith('*') ||
-				  currentText.endsWith('/') ||
-			          currentText.endsWith('.')) {
-            return;
-        }
-
-        ui->display->setText(currentText + token);
-        return;
-    }
-
-    if (name == "btnSqrt") {
-        if (currentText == "0") {
-            ui->display->setText(token);
-        } else {
-            ui->display->setText(currentText + token);
-        }
-
-        return;
-    }
 
     if (name == "btnMinus") {
         if (currentText == "0") {
             ui->display->setText(token);
         } else {
-            ui->display->setText(currentText + token);
+            ui->display->insert(token);
         }
 
         return;
     }
 
     if (currentText == "0" || currentText.endsWith('+') ||
-			      currentText.endsWith('-') ||
-			      currentText.endsWith('*') ||
-			      currentText.endsWith('/') ||
-			      currentText.endsWith('.')) {
+        currentText.endsWith('-') || currentText.endsWith('*') ||
+        currentText.endsWith('/') || currentText.endsWith('.') ||
+        currentText.endsWith('%') || currentText.endsWith('^') ||
+        currentText.endsWith("√")) {
         return;
     }
 
-    ui->display->setText(currentText + token);
+    ui->display->insert(token);
 }
 
-// Evaluate expression
 void MainWindow::btnEqual()
 {
     QString expression = ui->display->text();
+
+    static QRegularExpression invalidRe("[\\+\\-\\*/%\\^√]$");
+    if (expression.contains(invalidRe)) {
+        return;
+    }
 
     try {
         double result = evaluateExpression(expression);
@@ -226,38 +225,99 @@ void MainWindow::btnEqual()
     }
 }
 
-// Clear both displays
 void MainWindow::btnClear() {
     ui->display->setText("0");
     ui->displayHistory->clear();
 }
 
-// Add dot in number
 void MainWindow::btnDot() {
     QString currentText = ui->display->text();
-    static QRegularExpression re("[\\+\\-\\*/%\\^ns!]");
+    static QRegularExpression re("[\\+\\-\\*/%\\^√]");
     int lastOperator = currentText.lastIndexOf(re);
 
     QString currentNumber = currentText.mid(lastOperator + 1);
 
     if (!currentNumber.contains('.') && !currentText.endsWith('!')) {
-        ui->display->setText(currentText + ".");
+        ui->display->insert(".");
     }
 }
 
-// Display help
 void MainWindow::btnHelp() {
     HelpWindow helpWindow(this);
     helpWindow.exec();
 }
 
-// Destructor
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-// Simple evaluation of expression
 double MainWindow::evaluateExpression(const QString &expr) {
-    return calculator::math::evaluateExpression(expr.toStdString());
+    QString internalExpr = expr;
+    internalExpr.replace("√", "n");
+    return calculator::math::evaluateExpression(internalExpr.toStdString());
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() >= Qt::Key_0 && event->key() <= Qt::Key_9) {
+        int number = event->key() - Qt::Key_0;
+        QString btnName = "btn" + QString::number(number);
+        QPushButton *btn = findChild<QPushButton*>(btnName);
+        if (btn) {
+            btn->animateClick();
+        }
+    }
+
+    else {
+        switch (event->key()) {
+            case Qt::Key_Plus:
+                ui->btnPlus->animateClick();
+                break;
+            case Qt::Key_Minus:
+                ui->btnMinus->animateClick();
+                break;
+            case Qt::Key_Asterisk:
+                ui->btnMult->animateClick();
+                break;
+            case Qt::Key_Slash:
+                ui->btnDiv->animateClick();
+                break;
+            case Qt::Key_Equal:
+                ui->btnEqual->animateClick();
+                break;
+            case Qt::Key_Enter:
+            case Qt::Key_Return:
+                ui->btnEqual->animateClick();
+                break;
+            case Qt::Key_Backspace:
+                ui->display->backspace();
+                break;
+            case Qt::Key_Escape:
+                ui->btnClear->animateClick();
+                break;
+            case Qt::Key_Period:
+            case Qt::Key_Comma:
+                ui->btnDot->animateClick();
+                break;
+            case Qt::Key_F:
+                ui->btnFact->animateClick();
+                break;
+            case Qt::Key_P:
+                ui->btnRoot->animateClick();
+                break;
+            case Qt::Key_S:
+                ui->btnSqrt->animateClick();
+                break;
+            case Qt::Key_N:
+                ui->btnNSqrt->animateClick();
+                break;
+            case Qt::Key_M:
+                ui->btnMod->animateClick();
+                break;
+            default:
+                QMainWindow::keyPressEvent(event);
+                return;
+        }
+    }
 }
