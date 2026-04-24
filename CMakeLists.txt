@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(CTest)
 
 add_subdirectory(src/math)
+add_subdirectory(src/profiler)
 add_subdirectory(src/gui)
 
 set(CPACK_PACKAGE_NAME "ivs-kalkulacka")
