@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(ivs-projekt2026 LANGUAGES CXX)
+project(ivs-projekt2026 VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,3 +9,40 @@ include(CTest)
 
 add_subdirectory(src/math)
 add_subdirectory(src/gui)
+
+set(CPACK_PACKAGE_NAME "ivs-kalkulacka")
+set(CPACK_PACKAGE_VENDOR "kalkulacka.ai")
+set(CPACK_PACKAGE_CONTACT "kalkulacka.ai")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "GUI kalkulacka pre projekt IVS")
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "IVS Kalkulacka")
+set(CPACK_MONOLITHIC_INSTALL ON)
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE.txt")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
+
+if(WIN32)
+	set(CPACK_GENERATOR "NSIS;ZIP")
+	set(CPACK_NSIS_DISPLAY_NAME "IVS Kalkulacka")
+	set(CPACK_NSIS_PACKAGE_NAME "IVS Kalkulacka")
+	set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
+elseif(UNIX AND NOT APPLE)
+	set(CPACK_GENERATOR "DEB;TGZ")
+	set(CPACK_DEBIAN_PACKAGE_MAINTAINER "kalkulacka.ai")
+	set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
+	set(CPACK_DEBIAN_PACKAGE_SECTION "utils")
+	set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+
+	find_program(DPKG_CMD dpkg)
+	if(DPKG_CMD)
+		execute_process(
+			COMMAND ${DPKG_CMD} --print-architecture
+			OUTPUT_VARIABLE DEB_ARCH
+			OUTPUT_STRIP_TRAILING_WHITESPACE
+		)
+		if(DEB_ARCH)
+			set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "${DEB_ARCH}")
+		endif()
+	endif()
+endif()
+
+include(CPack)

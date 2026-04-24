@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=IVS Kalkulacka
+GenericName=Calculator
+Comment=GUI kalkulacka for IVS project
+Exec=@APP_EXECUTABLE_NAME@
+Icon=icon
+Terminal=false
+Categories=Utility;Calculator;
+StartupNotify=true
