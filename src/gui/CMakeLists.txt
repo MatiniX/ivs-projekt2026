@@ -47,6 +47,7 @@ endif()
 target_link_libraries(gui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets calculator::math)
 
 set(APP_EXECUTABLE_NAME "ivs-kalkulacka")
+set(APP_ICON_NAME "ivs-kalkulacka")
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
@@ -75,20 +76,23 @@ install(TARGETS gui
 )
 
 if(UNIX AND NOT APPLE)
+    set(APP_DESKTOP_FILE "${CMAKE_CURRENT_BINARY_DIR}/${APP_EXECUTABLE_NAME}.desktop")
+
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/packaging/ivs-kalkulacka.desktop.in
-        ${CMAKE_CURRENT_BINARY_DIR}/ivs-kalkulacka.desktop
+        ${APP_DESKTOP_FILE}
         @ONLY
     )
 
     install(FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/ivs-kalkulacka.desktop
+        ${APP_DESKTOP_FILE}
         DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
     )
 
     install(FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/packaging/icon.svg
         DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps
+        RENAME ${APP_ICON_NAME}.svg
     )
 endif()
 
