@@ -1,5 +1,6 @@
 #include "calculator/math.hpp"
 
+#include <charconv>
 #include <cctype>
 #include <cerrno>
 #include <cmath>
@@ -233,23 +234,72 @@ namespace calculator::math
             {
                 skipWhitespace();
 
-                const char *begin = expression_.c_str() + position_;
-                char *end = nullptr;
+                const std::size_t start = position_;
+                bool hasDigit = false;
 
-                errno = 0;
-                const double value = std::strtod(begin, &end);
+                while (!isAtEnd() && std::isdigit(static_cast<unsigned char>(expression_[position_])))
+                {
+                    hasDigit = true;
+                    ++position_;
+                }
 
-                if (begin == end)
+                if (!isAtEnd() && expression_[position_] == '.')
+                {
+                    ++position_;
+
+                    while (!isAtEnd() && std::isdigit(static_cast<unsigned char>(expression_[position_])))
+                    {
+                        hasDigit = true;
+                        ++position_;
+                    }
+                }
+
+                if (!hasDigit)
                 {
                     throw MathError(ErrorCode::MissingOperand, "Expected a number");
                 }
 
-                if (errno == ERANGE)
+                if (!isAtEnd() && (expression_[position_] == 'e' || expression_[position_] == 'E'))
+                {
+                    const std::size_t exponentStart = position_;
+                    ++position_;
+
+                    if (!isAtEnd() && (expression_[position_] == '+' || expression_[position_] == '-'))
+                    {
+                        ++position_;
+                    }
+
+                    const std::size_t exponentDigitsStart = position_;
+                    while (!isAtEnd() && std::isdigit(static_cast<unsigned char>(expression_[position_])))
+                    {
+                        ++position_;
+                    }
+
+                    if (position_ == exponentDigitsStart)
+                    {
+                        // Keep trailing e/E as a token for normal parser error handling.
+                        position_ = exponentStart;
+                    }
+                }
+
+                const std::string token = expression_.substr(start, position_ - start);
+                double value = 0.0;
+                const auto result = std::from_chars(
+                    token.data(),
+                    token.data() + token.size(),
+                    value,
+                    std::chars_format::general);
+
+                if (result.ec == std::errc::result_out_of_range)
                 {
                     throw MathError(ErrorCode::OverflowOrDomainError, "Number is outside supported range");
                 }
 
-                position_ += static_cast<std::size_t>(end - begin);
+                if (result.ec != std::errc() || result.ptr != token.data() + token.size())
+                {
+                    throw MathError(ErrorCode::InvalidToken, "Invalid number format");
+                }
+
                 return value;
             }
 
