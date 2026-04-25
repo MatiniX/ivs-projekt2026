@@ -27,5 +27,6 @@
 *.exe
 *.out
 *.app
-build/
-build-gprof/
+*.zip
+*.tar.gz
+build*/

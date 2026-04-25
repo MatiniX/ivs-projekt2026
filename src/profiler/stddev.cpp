@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <limits>
+#include <vector>
 
 #include "calculator/error.hpp"
 #include "calculator/math.hpp"
@@ -9,22 +10,17 @@ int main()
 	using namespace calculator::math;
 
 	std::size_t count = 0;
-	double mean = 0.0;
-	double m2 = 0.0;
 	double value = 0.0;
+	std::vector<double> values;
 
 	try
 	{
 		while (std::scanf("%lf", &value) == 1)
 		{
-			++count;
-
-			const double n = static_cast<double>(count);
-			const double delta = subtract(value, mean);
-			mean = add(mean, divide(delta, n));
-			const double delta2 = subtract(value, mean);
-			m2 = add(m2, multiply(delta, delta2));
+			values.push_back(value);
 		}
+
+		count = values.size();
 
 		if (count < 2)
 		{
@@ -32,7 +28,22 @@ int main()
 			return 0;
 		}
 
-		double variance = divide(m2, static_cast<double>(count - 1));
+		double sum = 0.0;
+		for (double current : values)
+		{
+			sum = add(sum, current);
+		}
+
+		const double mean = divide(sum, static_cast<double>(count));
+
+		double squaredDeviationSum = 0.0;
+		for (double current : values)
+		{
+			const double diff = subtract(current, mean);
+			squaredDeviationSum = add(squaredDeviationSum, multiply(diff, diff));
+		}
+
+		double variance = divide(squaredDeviationSum, static_cast<double>(count - 1));
 		if (variance < 0.0 && variance > -std::numeric_limits<double>::epsilon())
 		{
 			variance = 0.0;
