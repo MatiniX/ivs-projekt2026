@@ -27,9 +27,9 @@ message(STATUS "C++ compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERS
 
 include(CTest)
 
-add_subdirectory(src/math)
-add_subdirectory(src/profiler)
-add_subdirectory(src/gui)
+add_subdirectory(math)
+add_subdirectory(profiler)
+add_subdirectory(gui)
 
 set(CPACK_PACKAGE_NAME "ivs-kalkulacka")
 set(CPACK_PACKAGE_VENDOR "kalkulacka.ai")
@@ -38,8 +38,8 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "GUI kalkulacka pre projekt IVS")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "IVS Kalkulacka")
 set(CPACK_MONOLITHIC_INSTALL ON)
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE.txt")
-set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE "../LICENSE.txt")
+set(CPACK_RESOURCE_FILE_README "../README.md")
 
 if(WIN32)
 	set(CPACK_GENERATOR "NSIS;ZIP")

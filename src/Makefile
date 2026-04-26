@@ -7,10 +7,10 @@ all:
 	cmake --build  build
 
 run: all
-	./build/src/gui/ivs-kalkulacka
+	./build/gui/ivs-kalkulacka
 
 test: all
-	./build/src/math/calculator_math_tests
+	./build/math/calculator_math_tests
 
 clean:
 	rm -rf build build-debug build-gprof
@@ -35,7 +35,7 @@ pack:
 	@set -e; \
 	TMP_DIR=$$(mktemp -d); \
 	mkdir -p "$$TMP_DIR/doc" "$$TMP_DIR/install" "$$TMP_DIR/repo"; \
-	if [ -d doc ]; then cp -a doc/. "$$TMP_DIR/doc/"; fi; \
+	if [ -d ../doc ]; then cp -a ../doc/. "$$TMP_DIR/doc/"; fi; \
 	if ! find build -maxdepth 1 -type f \( -name "*.deb" -o -name "*.exe" -o -name "*.msi" \) | grep -q .; then \
 		echo "Calculator installer not found in build/. Trying to generate it..."; \
 		$(MAKE) package-linux; \
@@ -46,13 +46,13 @@ pack:
 		rm -rf "$$TMP_DIR"; \
 		exit 1; \
 	fi; \
-	if [ -f build/src/profiler/stddev ]; then cp -a build/src/profiler/stddev "$$TMP_DIR/install/"; fi; \
+	if [ -f build/profiler/stddev ]; then cp -a build/profiler/stddev "$$TMP_DIR/install/"; fi; \
 	find build -type f \( -name "*stddev*.deb" -o -name "*stddev*.exe" -o -name "*stddev*.msi" -o -name "*stddev*.zip" -o -name "*stddev*.tar.gz" \) -exec cp -a {} "$$TMP_DIR/install/" \; 2>/dev/null || true; \
-	tar --exclude="./build" --exclude="./build-gprof" --exclude="./projekt.zip" --exclude="./.DS_Store" -cf - . | (cd "$$TMP_DIR/repo" && tar -xf -); \
-	rm -f projekt.zip; \
-	(cd "$$TMP_DIR" && zip -rq "$(CURDIR)/projekt.zip" doc install repo); \
+	(cd .. && tar --exclude="./src/build" --exclude="./src/build-gprof" --exclude="./projekt.zip" --exclude="./src/projekt.zip" --exclude="./.DS_Store" -cf - .) | (cd "$$TMP_DIR/repo" && tar -xf -); \
+	rm -f ../projekt.zip projekt.zip; \
+	(cd "$$TMP_DIR" && zip -rq "$(CURDIR)/../projekt.zip" doc install repo); \
 	rm -rf "$$TMP_DIR"; \
-	echo "Archive created: ./projekt.zip"
+	echo "Archive created: ../projekt.zip"
 
 doc:
 	@echo "Doxygen dorobit"
@@ -60,7 +60,7 @@ doc:
 stddev:
 	cmake -S . -B build
 	cmake --build build --target stddev
-	@echo "Built executable: ./build/src/profiler/stddev"
+	@echo "Built executable: ./build/profiler/stddev"
 
 debug-math:
 	@command -v gdb >/dev/null || (echo "gdb is required but not installed"; exit 1)
@@ -71,18 +71,18 @@ debug-math:
 profile-stddev:
 	@set -e; \
 	command -v gprof >/dev/null || (echo "gprof is required but not installed"; exit 1); \
-	test -f profiling/input_10.txt || (echo "Missing profiling/input_10.txt"; exit 1); \
-	test -f profiling/input_1e3.txt || (echo "Missing profiling/input_1e3.txt"; exit 1); \
-	test -f profiling/input_1e6.txt || (echo "Missing profiling/input_1e6.txt"; exit 1); \
-	test -f profiling/input_random_1e6.txt || (echo "Missing profiling/input_random_1e6.txt"; exit 1); \
+	test -f ../profiling/input_10.txt || (echo "Missing profiling/input_10.txt"; exit 1); \
+	test -f ../profiling/input_1e3.txt || (echo "Missing profiling/input_1e3.txt"; exit 1); \
+	test -f ../profiling/input_1e6.txt || (echo "Missing profiling/input_1e6.txt"; exit 1); \
+	test -f ../profiling/input_random_1e6.txt || (echo "Missing profiling/input_random_1e6.txt"; exit 1); \
 	INCLUDE_1E7=$${PROFILE_INCLUDE_1E7:-0}; \
 	if [ "$$INCLUDE_1E7" = "1" ]; then \
-		test -f profiling/input_random_1e7.txt || (echo "Missing profiling/input_random_1e7.txt"; exit 1); \
+		test -f ../profiling/input_random_1e7.txt || (echo "Missing profiling/input_random_1e7.txt"; exit 1); \
 	fi; \
-	rm -f gmon.out gmon.sum profiling/gmon_*.out profiling/gprof_*.txt; \
+	rm -f gmon.out gmon.sum ../profiling/gmon_*.out ../profiling/gprof_*.txt; \
 	cmake -S . -B build-gprof -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE="-O2 -pg" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="-pg"; \
 	cmake --build build-gprof --target stddev; \
-	BIN=./build-gprof/src/profiler/stddev; \
+	BIN=./build-gprof/profiler/stddev; \
 	REPS_10=$${PROFILE_REPS_10:-150}; \
 	REPS_1E3=$${PROFILE_REPS_1E3:-100}; \
 	REPS_1E6=$${PROFILE_REPS_1E6:-10}; \
@@ -100,26 +100,26 @@ profile-stddev:
 			i=$$((i + 1)); \
 		done; \
 		gprof -s "$$BIN" "$$TMP_RUN_DIR"/gmon_*.out > /dev/null; \
-		mv gmon.sum "profiling/gmon_$$NAME.out"; \
-		gprof "$$BIN" "profiling/gmon_$$NAME.out" > "profiling/gprof_$$NAME.txt"; \
+		mv gmon.sum "../profiling/gmon_$$NAME.out"; \
+		gprof "$$BIN" "../profiling/gmon_$$NAME.out" > "../profiling/gprof_$$NAME.txt"; \
 		rm -rf "$$TMP_RUN_DIR"; \
 	}; \
-	run_profile profiling/input_10.txt 10 "$$REPS_10"; \
-	run_profile profiling/input_1e3.txt 1e3 "$$REPS_1E3"; \
-	run_profile profiling/input_1e6.txt 1e6 "$$REPS_1E6"; \
-	run_profile profiling/input_random_1e6.txt random_1e6 "$$REPS_RANDOM_1E6"; \
+	run_profile ../profiling/input_10.txt 10 "$$REPS_10"; \
+	run_profile ../profiling/input_1e3.txt 1e3 "$$REPS_1E3"; \
+	run_profile ../profiling/input_1e6.txt 1e6 "$$REPS_1E6"; \
+	run_profile ../profiling/input_random_1e6.txt random_1e6 "$$REPS_RANDOM_1E6"; \
 	if [ "$$INCLUDE_1E7" = "1" ]; then \
-		run_profile profiling/input_random_1e7.txt random_1e7 "$$REPS_1E7"; \
+		run_profile ../profiling/input_random_1e7.txt random_1e7 "$$REPS_1E7"; \
 	fi; \
 	echo "Profiling reports created in ./profiling"
 
 profile-input-random-1e7:
 	@mkdir -p profiling
-	@if [ -f profiling/input_random_1e7.txt ]; then \
-		echo "Input already exists: profiling/input_random_1e7.txt"; \
+	@if [ -f ../profiling/input_random_1e7.txt ]; then \
+		echo "Input already exists: ../profiling/input_random_1e7.txt"; \
 	else \
-		echo "Generating profiling/input_random_1e7.txt (10^7 random values)..."; \
-		awk 'BEGIN { srand(); for (i = 1; i <= 10000000; i++) print rand() * 1000000 }' > profiling/input_random_1e7.txt; \
+		echo "Generating ../profiling/input_random_1e7.txt (10^7 random values)..."; \
+		awk 'BEGIN { srand(); for (i = 1; i <= 10000000; i++) print rand() * 1000000 }' > ../profiling/input_random_1e7.txt; \
 		echo "Generated profiling/input_random_1e7.txt"; \
 	fi
 
