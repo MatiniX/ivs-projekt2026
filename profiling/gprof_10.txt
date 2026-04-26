@@ -5,13 +5,13 @@ Each sample counts as 0.01 seconds.
 
   %   cumulative   self              self     total           
  time   seconds   seconds    calls  Ts/call  Ts/call  name    
-  0.00      0.00     0.00     3000     0.00     0.00  calculator::math::add(double, double)
-  0.00      0.00     0.00     1500     0.00     0.00  calculator::math::multiply(double, double)
-  0.00      0.00     0.00     1500     0.00     0.00  calculator::math::subtract(double, double)
-  0.00      0.00     0.00      750     0.00     0.00  void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&)
-  0.00      0.00     0.00      300     0.00     0.00  calculator::math::divide(double, double)
-  0.00      0.00     0.00      150     0.00     0.00  calculator::math::squareRoot(double)
-  0.00      0.00     0.00      150     0.00     0.00  std::_Vector_base<double, std::allocator<double> >::~_Vector_base()
+  0.00      0.00     0.00    10000     0.00     0.00  calculator::math::add(double, double)
+  0.00      0.00     0.00     5000     0.00     0.00  calculator::math::multiply(double, double)
+  0.00      0.00     0.00     5000     0.00     0.00  calculator::math::subtract(double, double)
+  0.00      0.00     0.00     2500     0.00     0.00  void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&)
+  0.00      0.00     0.00     1000     0.00     0.00  calculator::math::divide(double, double)
+  0.00      0.00     0.00      500     0.00     0.00  calculator::math::squareRoot(double)
+  0.00      0.00     0.00      500     0.00     0.00  std::_Vector_base<double, std::allocator<double> >::~_Vector_base()
 
  %         the percentage of the total running time of the
 time       program used by this function.
@@ -52,26 +52,26 @@ notice and this notice are preserved.
 granularity: each sample hit covers 4 byte(s) no time propagated
 
 index % time    self  children    called     name
-                0.00    0.00    3000/3000        main [6]
-[8]      0.0    0.00    0.00    3000         calculator::math::add(double, double) [8]
+                0.00    0.00   10000/10000       main [6]
+[8]      0.0    0.00    0.00   10000         calculator::math::add(double, double) [8]
 -----------------------------------------------
-                0.00    0.00    1500/1500        main [6]
-[9]      0.0    0.00    0.00    1500         calculator::math::multiply(double, double) [9]
+                0.00    0.00    5000/5000        main [6]
+[9]      0.0    0.00    0.00    5000         calculator::math::multiply(double, double) [9]
 -----------------------------------------------
-                0.00    0.00    1500/1500        main [6]
-[10]     0.0    0.00    0.00    1500         calculator::math::subtract(double, double) [10]
+                0.00    0.00    5000/5000        main [6]
+[10]     0.0    0.00    0.00    5000         calculator::math::subtract(double, double) [10]
 -----------------------------------------------
-                0.00    0.00     750/750         main [6]
-[11]     0.0    0.00    0.00     750         void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&) [11]
+                0.00    0.00    2500/2500        main [6]
+[11]     0.0    0.00    0.00    2500         void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&) [11]
 -----------------------------------------------
-                0.00    0.00     300/300         main [6]
-[12]     0.0    0.00    0.00     300         calculator::math::divide(double, double) [12]
+                0.00    0.00    1000/1000        main [6]
+[12]     0.0    0.00    0.00    1000         calculator::math::divide(double, double) [12]
 -----------------------------------------------
-                0.00    0.00     150/150         main [6]
-[13]     0.0    0.00    0.00     150         calculator::math::squareRoot(double) [13]
+                0.00    0.00     500/500         main [6]
+[13]     0.0    0.00    0.00     500         calculator::math::squareRoot(double) [13]
 -----------------------------------------------
-                0.00    0.00     150/150         main [6]
-[14]     0.0    0.00    0.00     150         std::_Vector_base<double, std::allocator<double> >::~_Vector_base() [14]
+                0.00    0.00     500/500         main [6]
+[14]     0.0    0.00    0.00     500         std::_Vector_base<double, std::allocator<double> >::~_Vector_base() [14]
 -----------------------------------------------
 
  This table describes the call tree of the program, and was sorted by

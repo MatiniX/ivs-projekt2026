@@ -2,15 +2,15 @@ Flat profile:
 
 Each sample counts as 0.01 seconds.
   %   cumulative   self              self     total           
- time   seconds   seconds    calls  Ts/call  Ts/call  name    
-100.00      0.06     0.06                             main
-  0.00      0.06     0.00 20000000     0.00     0.00  calculator::math::add(double, double)
-  0.00      0.06     0.00 10000000     0.00     0.00  calculator::math::multiply(double, double)
-  0.00      0.06     0.00 10000000     0.00     0.00  calculator::math::subtract(double, double)
-  0.00      0.06     0.00      210     0.00     0.00  void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&)
-  0.00      0.06     0.00       20     0.00     0.00  calculator::math::divide(double, double)
-  0.00      0.06     0.00       10     0.00     0.00  calculator::math::squareRoot(double)
-  0.00      0.06     0.00       10     0.00     0.00  std::_Vector_base<double, std::allocator<double> >::~_Vector_base()
+ time   seconds   seconds    calls  ns/call  ns/call  name    
+ 67.86      0.19     0.19                             main
+ 14.29      0.23     0.04 60000000     0.67     0.67  calculator::math::add(double, double)
+ 14.29      0.27     0.04 30000000     1.33     1.33  calculator::math::multiply(double, double)
+  3.57      0.28     0.01 30000000     0.33     0.33  calculator::math::subtract(double, double)
+  0.00      0.28     0.00      630     0.00     0.00  void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&)
+  0.00      0.28     0.00       60     0.00     0.00  calculator::math::divide(double, double)
+  0.00      0.28     0.00       30     0.00     0.00  calculator::math::squareRoot(double)
+  0.00      0.28     0.00       30     0.00     0.00  std::_Vector_base<double, std::allocator<double> >::~_Vector_base()
 
  %         the percentage of the total running time of the
 time       program used by this function.
@@ -48,39 +48,39 @@ notice and this notice are preserved.
 		     Call graph (explanation follows)
 
 
-granularity: each sample hit covers 4 byte(s) for 16.67% of 0.06 seconds
+granularity: each sample hit covers 4 byte(s) for 3.57% of 0.28 seconds
 
 index % time    self  children    called     name
                                                  <spontaneous>
-[1]    100.0    0.06    0.00                 main [1]
-                0.00    0.00 20000000/20000000     calculator::math::add(double, double) [8]
-                0.00    0.00 10000000/10000000     calculator::math::subtract(double, double) [10]
-                0.00    0.00 10000000/10000000     calculator::math::multiply(double, double) [9]
-                0.00    0.00     210/210         void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&) [11]
-                0.00    0.00      20/20          calculator::math::divide(double, double) [12]
-                0.00    0.00      10/10          std::_Vector_base<double, std::allocator<double> >::~_Vector_base() [14]
-                0.00    0.00      10/10          calculator::math::squareRoot(double) [13]
+[1]    100.0    0.19    0.09                 main [1]
+                0.04    0.00 60000000/60000000     calculator::math::add(double, double) [2]
+                0.04    0.00 30000000/30000000     calculator::math::multiply(double, double) [3]
+                0.01    0.00 30000000/30000000     calculator::math::subtract(double, double) [4]
+                0.00    0.00     630/630         void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&) [11]
+                0.00    0.00      60/60          calculator::math::divide(double, double) [12]
+                0.00    0.00      30/30          std::_Vector_base<double, std::allocator<double> >::~_Vector_base() [14]
+                0.00    0.00      30/30          calculator::math::squareRoot(double) [13]
 -----------------------------------------------
-                0.00    0.00 20000000/20000000     main [1]
-[8]      0.0    0.00    0.00 20000000         calculator::math::add(double, double) [8]
+                0.04    0.00 60000000/60000000     main [1]
+[2]     14.3    0.04    0.00 60000000         calculator::math::add(double, double) [2]
 -----------------------------------------------
-                0.00    0.00 10000000/10000000     main [1]
-[9]      0.0    0.00    0.00 10000000         calculator::math::multiply(double, double) [9]
+                0.04    0.00 30000000/30000000     main [1]
+[3]     14.3    0.04    0.00 30000000         calculator::math::multiply(double, double) [3]
 -----------------------------------------------
-                0.00    0.00 10000000/10000000     main [1]
-[10]     0.0    0.00    0.00 10000000         calculator::math::subtract(double, double) [10]
+                0.01    0.00 30000000/30000000     main [1]
+[4]      3.6    0.01    0.00 30000000         calculator::math::subtract(double, double) [4]
 -----------------------------------------------
-                0.00    0.00     210/210         main [1]
-[11]     0.0    0.00    0.00     210         void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&) [11]
+                0.00    0.00     630/630         main [1]
+[11]     0.0    0.00    0.00     630         void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&) [11]
 -----------------------------------------------
-                0.00    0.00      20/20          main [1]
-[12]     0.0    0.00    0.00      20         calculator::math::divide(double, double) [12]
+                0.00    0.00      60/60          main [1]
+[12]     0.0    0.00    0.00      60         calculator::math::divide(double, double) [12]
 -----------------------------------------------
-                0.00    0.00      10/10          main [1]
-[13]     0.0    0.00    0.00      10         calculator::math::squareRoot(double) [13]
+                0.00    0.00      30/30          main [1]
+[13]     0.0    0.00    0.00      30         calculator::math::squareRoot(double) [13]
 -----------------------------------------------
-                0.00    0.00      10/10          main [1]
-[14]     0.0    0.00    0.00      10         std::_Vector_base<double, std::allocator<double> >::~_Vector_base() [14]
+                0.00    0.00      30/30          main [1]
+[14]     0.0    0.00    0.00      30         std::_Vector_base<double, std::allocator<double> >::~_Vector_base() [14]
 -----------------------------------------------
 
  This table describes the call tree of the program, and was sorted by
@@ -173,6 +173,6 @@ notice and this notice are preserved.
 
 Index by function name
 
-  [13] calculator::math::squareRoot(double) [9] calculator::math::multiply(double, double) [11] void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&)
-   [8] calculator::math::add(double, double) [10] calculator::math::subtract(double, double) [1] main
+  [13] calculator::math::squareRoot(double) [3] calculator::math::multiply(double, double) [11] void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&)
+   [2] calculator::math::add(double, double) [4] calculator::math::subtract(double, double) [1] main
   [12] calculator::math::divide(double, double) [14] std::_Vector_base<double, std::allocator<double> >::~_Vector_base()

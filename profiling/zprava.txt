@@ -1,15 +1,24 @@
 Pre profilovanie bol použitý nástro gprof. Výstupy z profilovania sú v súboroch
-gprof_10.txt, gprof_1e3.txt, gprof_1e6.txt, gprof_random_1e6.txt a gprof_random_1e7.txt. 
+gprof_10.txt, gprof_1e3.txt, gprof_1e6.txt, gprof_random_1e6.txt a gprof_random_1e7.txt.
+Výstupy sú výsledky po spustení cieľa profile-sttdev-heavy z Makefile, tento cieľ spúšťa profilovanie nad testovacími
+vstupmi niekoľkonásobne po sebe a tiež spúšťa profilovanie so 10^7 hodnotami.
 
 Zhrnutie:
-- Vstupy o veľkosti 10 a 10^3 hodnôt (gprof_10.txt, gprof_1e3.txt) majú "no time accumulated". Čo znamená že pri tomto zaťažení je beh príliš krátky na rozlíšenie nejakých problémov. gprof (vzorkovanie po 0.01s), preto sú všetky self časy 0.00 s.
-- Vstup o počte 10^6 hodnôt (gprof_1e6.txt) už ukazuje meraťelný čas: spolu ~0.05s, pričom 100 % času je priradené funkcii main.
-- Vstup 10^6 náhodných hodnôt (gprof_random_1e6.txt) vyzerá veľmi podobne: spolu ~0.03s a opäť 100 % času v main.
-- Až vstup o počte 10^7 náhodných hodnôt (gprof_random_1e7.txt) má nejaké merateľné výsledky. Z neho je poznať že funkcia
-  subtract má oproti funkcii add polovičný počet volaní ale ich celkový merateľný čas je veľmi podobný
+- Vstupy o veľkosti 10 a 10^3 (gprof_10.txt a gprof_1e3.txt) hodnôt majú "no time accumulated". 
+  Čo znamená že pri tomto zaťažení je beh príliš krátky na rozlíšenie nejakých problémov. 
+  gprof vzorkuje po 0.01s, preto sú všetky self časy 0.00s.
+- Vstup o počte 10^6 hodnôt (gprof_1e6.txt) už ukazuje meraťelný čas. Pričom je možné pozorovať že funkcia multiply 
+  nepriek tomu že má o polovicu menej volaní ako funkcia add tak hodnoty funckie multiply sú dvakrát väčšie oproti add.
+  Čo naznačuje že vykonávaie funkcie multiply trvá 2-krát dlhšie ako vykonávanie funkcie add. 
+- Vstup 10^6 náhodných hodnôt (gprof_random_1e6.txt) vyzerá podobne. Tu je však možné pozorovať až 3-krát viac času
+  stráveneho vo funkcii multiply aj napriek tomu že bola volaná 2-krát menej ako funkcia add.
+- Pri vstupe o počte 10^7 náhodných hodnôt (gprof_random_1e7.txt) je podobný s výsledkami vstupu 10^6 hodnôt a to tým že
+  aj keď funkcia multiply je volaná 2-krát menej ako funkcia add čas strávený vykonávním funkcie multiply celkovo je podobný
+  času vykonávania funkcie add.
 
 Záver:
-Program je veľmi rýchly a pri gprof dominuje čas hlavnej slučky (main), t. j. čítanie vstupu a celkové riadenie výpočtu. 
+Program je veľmi rýchly a pri profilovaní vstupov s malým počtom hodnôt dominuje čas hlavnej slučky (main), 
+t. j. čítanie vstupu a celkové riadenie výpočtu. 
 Pre detailnejšie rozdelenie času medzi malé matematické operácie by bol vhodný profiler s jemnejším rozlíšením alebo dlhší benchmark.
 Napriek tomu je pri dostatočne veľkom vstupe možné usúdiť že funkcia add je oproti ostatným funkciam volaných v sľučke
 (subtract a multiply) značne rýchlejšia. Pri optimálizácii kódu je preto vhodné zameriť sa práve na tieto funkcie.
