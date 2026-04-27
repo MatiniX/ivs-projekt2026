@@ -13,7 +13,7 @@ test: all
 	./build/math/calculator_math_tests
 
 clean:
-	rm -rf build build-debug build-gprof
+	rm -rf build build-debug build-gprof html
 	rm -f gmon.out gmon.sum projekt.zip
 	rm -f profiling/gmon_*.out profiling/gprof_*.txt
 
@@ -36,6 +36,8 @@ pack:
 	TMP_DIR=$$(mktemp -d); \
 	mkdir -p "$$TMP_DIR/doc" "$$TMP_DIR/install" "$$TMP_DIR/repo"; \
 	if [ -d ../doc ]; then cp -a ../doc/. "$$TMP_DIR/doc/"; fi; \
+	$(MAKE) doc; \
+	if [ -d html ]; then cp -a html "$$TMP_DIR/doc/"; fi; \
 	if ! find build -maxdepth 1 -type f \( -name "*.deb" -o -name "*.exe" -o -name "*.msi" \) | grep -q .; then \
 		echo "Calculator installer not found in build/. Trying to generate it..."; \
 		$(MAKE) package-linux; \
@@ -48,7 +50,7 @@ pack:
 	fi; \
 	if [ -f build/profiler/stddev ]; then cp -a build/profiler/stddev "$$TMP_DIR/install/"; fi; \
 	find build -type f \( -name "*stddev*.deb" -o -name "*stddev*.exe" -o -name "*stddev*.msi" -o -name "*stddev*.zip" -o -name "*stddev*.tar.gz" \) -exec cp -a {} "$$TMP_DIR/install/" \; 2>/dev/null || true; \
-	(cd .. && tar --exclude="./src/build" --exclude="./src/build-gprof" --exclude="./projekt.zip" --exclude="./src/projekt.zip" --exclude="./.DS_Store" -cf - .) | (cd "$$TMP_DIR/repo" && tar --exclude="./profiling/input_*.txt" -xf -); \
+	(cd .. && tar --exclude="./src/build" --exclude="./src/build-gprof" --exclude="./projekt.zip" --exclude="./src/projekt.zip" --exclude="./.DS_Store" -cf - .) | (cd "$$TMP_DIR/repo" && tar --exclude="./profiling/input_*.txt" --exclude="./profiling/*.out" -xf -); \
 	rm -f ../projekt.zip projekt.zip; \
 	(cd "$$TMP_DIR" && zip -rq "$(CURDIR)/../projekt.zip" doc install repo); \
 	rm -rf "$$TMP_DIR"; \

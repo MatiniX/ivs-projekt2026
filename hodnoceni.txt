@@ -1,4 +1,4 @@
-xmicham00 100 (základ GUI a základní mat. operace)
-xmagyam00 100 (pokročilé mat. operace)
-xpalesr00 100 (profiling, instalátor)
-xveselr00 100 (testy, dokumentace)
+xmicham00 100 (profiling, inštalátor, Makefile)
+xmagyam00 100 (matematická knižnica, testy)
+xpalesr00 100 (gui aplikácie)
+xveselr00 100 (dokumentácia, mockup)
