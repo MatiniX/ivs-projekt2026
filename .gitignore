@@ -27,4 +27,7 @@
 *.exe
 *.out
 *.app
-build/
+*.zip
+*.tar.gz
+build*/
+profiling/input_*.txt

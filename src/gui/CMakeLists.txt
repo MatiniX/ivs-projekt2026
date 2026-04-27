@@ -1,18 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-    project(gui VERSION 0.1 LANGUAGES CXX)
-endif()
-
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 if(NOT TARGET calculator_math)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../math ${CMAKE_CURRENT_BINARY_DIR}/math)
+    message(FATAL_ERROR "Target calculator_math is missing. Configure from repository root using cmake -S . -B build.")
 endif()
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
@@ -51,7 +44,10 @@ else()
     endif()
 endif()
 
-target_link_libraries(gui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets calculator_math)
+target_link_libraries(gui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets calculator::math)
+
+set(APP_EXECUTABLE_NAME "ivs-kalkulacka")
+set(APP_ICON_NAME "ivs-kalkulacka")
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
@@ -67,6 +63,7 @@ if(DEFINED BUNDLE_ID_OPTION)
 endif()
 
 set_target_properties(gui PROPERTIES
+    OUTPUT_NAME ${APP_EXECUTABLE_NAME}
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
@@ -77,6 +74,27 @@ install(TARGETS gui
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+if(UNIX AND NOT APPLE)
+    set(APP_DESKTOP_FILE "${CMAKE_CURRENT_BINARY_DIR}/${APP_EXECUTABLE_NAME}.desktop")
+
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/packaging/ivs-kalkulacka.desktop.in
+        ${APP_DESKTOP_FILE}
+        @ONLY
+    )
+
+    install(FILES
+        ${APP_DESKTOP_FILE}
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
+    )
+
+    install(FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/packaging/icon.svg
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps
+        RENAME ${APP_ICON_NAME}.svg
+    )
+endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(gui)
