@@ -55,7 +55,7 @@ pack:
 	echo "Archive created: ../projekt.zip"
 
 doc:
-	@echo "Doxygen dorobit"
+	doxygen Doxyfile
 
 stddev:
 	cmake -S . -B build

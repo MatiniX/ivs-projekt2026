@@ -31,3 +31,4 @@
 *.tar.gz
 build*/
 profiling/input_*.txt
+src/html
