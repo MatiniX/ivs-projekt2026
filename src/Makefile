@@ -48,7 +48,7 @@ pack:
 	fi; \
 	if [ -f build/profiler/stddev ]; then cp -a build/profiler/stddev "$$TMP_DIR/install/"; fi; \
 	find build -type f \( -name "*stddev*.deb" -o -name "*stddev*.exe" -o -name "*stddev*.msi" -o -name "*stddev*.zip" -o -name "*stddev*.tar.gz" \) -exec cp -a {} "$$TMP_DIR/install/" \; 2>/dev/null || true; \
-	(cd .. && tar --exclude="./src/build" --exclude="./src/build-gprof" --exclude="./projekt.zip" --exclude="./src/projekt.zip" --exclude="./.DS_Store" -cf - .) | (cd "$$TMP_DIR/repo" && tar -xf -); \
+	(cd .. && tar --exclude="./src/build" --exclude="./src/build-gprof" --exclude="./projekt.zip" --exclude="./src/projekt.zip" --exclude="./.DS_Store" -cf - .) | (cd "$$TMP_DIR/repo" && tar --exclude="./profiling/input_*.txt" -xf -); \
 	rm -f ../projekt.zip projekt.zip; \
 	(cd "$$TMP_DIR" && zip -rq "$(CURDIR)/../projekt.zip" doc install repo); \
 	rm -rf "$$TMP_DIR"; \
