@@ -5,6 +5,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::CalculatorApp)
 {
     ui->setupUi(this);
+    ui->display->installEventFilter(this);
 
     ui->display->setText("0");
 
@@ -123,16 +124,55 @@ MainWindow::MainWindow(QWidget *parent)
 )");
 }
 
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == ui->display && event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+
+        if (keyEvent->key() == Qt::Key_Left  ||
+            keyEvent->key() == Qt::Key_Right ||
+            keyEvent->key() == Qt::Key_Home  ||
+            keyEvent->key() == Qt::Key_End) {
+            return QMainWindow::eventFilter(obj, event);
+        }
+
+        keyPressEvent(keyEvent);
+        return true;
+    }
+    return QMainWindow::eventFilter(obj, event);
+}
+
 void MainWindow::onDigitClicked()
 {
     QPushButton *btn = (QPushButton*)sender();
     QString digit = btn->text();
+    QString currentText = ui->display->text();
+    QRegularExpression re("[\\+\\-\\*/%\\^√]");
 
-    if (ui->display->text() == "0") {
-       ui->display->setText(digit);
-    } else {
-        ui->display->insert(btn->text());
+    int cursor = ui->display->cursorPosition();
+    int start = currentText.lastIndexOf(re, cursor - 1) + 1;
+    int end = currentText.indexOf(re, cursor);
+
+    if (end == -1) {
+        end = currentText.length();
     }
+
+    QString currentNumber = currentText.mid(start, end - start);
+
+    if (digit == "0" && cursor == start) {
+        return;
+    }
+
+    if (currentNumber == "0") {
+        currentText.replace(start, 1, digit);
+        ui->display->setText(currentText);
+        ui->display->setCursorPosition(start + 1);
+        return;
+    }
+
+    currentText.insert(cursor, digit);
+    ui->display->setText(currentText);
+    ui->display->setCursorPosition(cursor + 1);
 }
 
 void MainWindow::onOperatorClicked()
@@ -141,9 +181,15 @@ void MainWindow::onOperatorClicked()
     QString name = btn->objectName();
     QString currentText = ui->display->text();
 
+    int cursorPosition = ui->display->cursorPosition();
+    QChar charBefore = cursorPosition > 0 ? currentText[cursorPosition - 1] : QChar();
+    QChar charAfter = cursorPosition < currentText.length() ? currentText[cursorPosition] : QChar();
+
+    static QRegularExpression binaryOperatorRe("[\\+\\-\\*/%\\^√]$");
+
     if (name == "btnSqrt" || name == "btnFact") {
-        static QRegularExpression binaryOperatorRe("[\\+\\-\\*/%\\^√]$");
-        if (currentText.contains(binaryOperatorRe) || currentText.endsWith('.')) {
+
+        if (currentText.contains(binaryOperatorRe) || currentText.endsWith(".")) {
             return;
         }
 
@@ -186,18 +232,20 @@ void MainWindow::onOperatorClicked()
     if (name == "btnMinus") {
         if (currentText == "0") {
             ui->display->setText(token);
+            ui->display->setCursorPosition(1);
+        } else if (!charBefore.isNull() && QString(charBefore).contains(binaryOperatorRe)) {
+            return;
         } else {
             ui->display->insert(token);
         }
-
         return;
     }
 
-    if (currentText == "0" || currentText.endsWith('+') ||
-        currentText.endsWith('-') || currentText.endsWith('*') ||
-        currentText.endsWith('/') || currentText.endsWith('.') ||
-        currentText.endsWith('%') || currentText.endsWith('^') ||
-        currentText.endsWith("√")) {
+    if (!charBefore.isNull() && QString(charBefore).contains(binaryOperatorRe)) {
+        return;
+    }
+
+    if (!charAfter.isNull() && QString(charAfter).contains(binaryOperatorRe)) {
         return;
     }
 
@@ -209,6 +257,7 @@ void MainWindow::btnEqual()
     QString expression = ui->display->text();
 
     static QRegularExpression invalidRe("[\\+\\-\\*/%\\^√]$");
+
     if (expression.contains(invalidRe)) {
         return;
     }
@@ -232,14 +281,33 @@ void MainWindow::btnClear() {
 
 void MainWindow::btnDot() {
     QString currentText = ui->display->text();
+
+    int cursor = ui->display->cursorPosition();
     static QRegularExpression re("[\\+\\-\\*/%\\^√]");
-    int lastOperator = currentText.lastIndexOf(re);
 
-    QString currentNumber = currentText.mid(lastOperator + 1);
+    int start = currentText.lastIndexOf(re, cursor - 1) + 1;
+    int end = currentText.indexOf(re, cursor);
 
-    if (!currentNumber.contains('.') && !currentText.endsWith('!')) {
-        ui->display->insert(".");
+    if (end == -1) {
+        end = currentText.length();
     }
+
+    QString currentNumber = currentText.mid(start, end - start);
+
+    if (currentNumber.contains(".")) {
+        return;
+    }
+
+    if (cursor == start) {
+        currentText.insert(cursor, "0.");
+        ui->display->setText(currentText);
+        ui->display->setCursorPosition(cursor + 2);
+        return;
+    }
+
+    currentText.insert(cursor, ".");
+    ui->display->setText(currentText);
+    ui->display->setCursorPosition(cursor + 1);
 }
 
 void MainWindow::btnHelp() {

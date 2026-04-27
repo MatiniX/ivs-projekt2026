@@ -31,6 +31,14 @@ public:
 
 private slots:
     /**
+     * @brief Filters events for the display to capture keyboard input
+     * @param obj The object that sent the event
+     * @param event The event being processed
+     * @return True if the event was handled, false otherwise
+     */
+    bool eventFilter(QObject *obj, QEvent *event);
+
+    /**
      * @brief Handles clicking on number buttons (0-9)
      */
     void onDigitClicked();
