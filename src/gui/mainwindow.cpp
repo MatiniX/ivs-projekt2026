@@ -270,7 +270,7 @@ void MainWindow::btnEqual()
         ui->display->setText(QString::number(result));
 
     } catch (std::exception &e) {
-        ui->display->setText("Error");
+        ui->display->setText("Error: " + QString(e.what()));
     }
 }
 
